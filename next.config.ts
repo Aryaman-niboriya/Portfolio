@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // @ts-ignore - explicitly requested by Next.js dev server logs
+  allowedDevOrigins: ['192.168.1.4'],
 };
 
 export default nextConfig;

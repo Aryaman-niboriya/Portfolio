@@ -1,0 +1,269 @@
+{
+  "hero": {
+    "firstName": "ARYAMAN",
+    "lastName": "NIBORIYA",
+    "role": "FULL STACK DEVELOPER",
+    "tagline": "Architecting experiences at the edge of human cognition and machine logic — one bit at a time.",
+    "stats": [
+      {
+        "value": "1+",
+        "label": "YEARS"
+      },
+      {
+        "value": "5+",
+        "label": "PROJECTS"
+      },
+      {
+        "value": "99%",
+        "label": "UPTIME"
+      }
+    ]
+  },
+  "about": {
+    "bio": [
+      "Hey, I'm Aryaman.\nFinal year CSE student from Gwalior, India. I don't just write code — I build things that work.\nMy stack is React, Python Flask, and MongoDB. Currently shifting to Node.js and Next.js as my JavaScript gets stronger.\nI use AI to build faster and smarter — from an AI resume analyzer to a real-time sign language translator. I turn ideas into real products.\nCurrently 200 days deep in a build-in-public challenge. Coding daily, pushing to GitHub daily, shipping weekly.\nI'm not waiting for placement season. I'm building my way in\n",
+      ""
+    ],
+    "timeline": [
+      {
+        "era": "PAST",
+        "tag": "00",
+        "desc": "Started with curiosity, built my first project with zero guidance. Learned by breaking things and fixing them."
+      },
+      {
+        "era": "PRESENT",
+        "tag": "01",
+        "desc": "Building AI-powered full stack products. 200 day build-in-public challenge — coding daily, shipping weekly. Turning ideas into real working apps."
+      },
+      {
+        "era": "FUTURE",
+        "tag": "10",
+        "desc": "Land a high-impact role at a product company or launch my own SaaS. Build things that actually matter to real people."
+      }
+    ],
+    "statsGrid": [
+      {
+        "label": "EXP",
+        "val": "1 YRS",
+        "bin": "01000101"
+      },
+      {
+        "label": "PROJECTS",
+        "val": "5+",
+        "bin": "00110001"
+      },
+      {
+        "label": "COMMITS",
+        "val": "50+",
+        "bin": "01001101"
+      },
+      {
+        "label": "SAS PRODUCT",
+        "val": "2",
+        "bin": "01001011"
+      },
+      {
+        "label": "UPTIME",
+        "val": "99.9%",
+        "bin": "01001101"
+      },
+      {
+        "label": "STATUS",
+        "val": "LIVE",
+        "bin": "01001111"
+      }
+    ]
+  },
+  "skills": {
+    "cards": [
+      {
+        "name": "REACT",
+        "level": 95
+      },
+      {
+        "name": "JAVASCRIPT",
+        "level": 92
+      },
+      {
+        "name": "NODE.JS",
+        "level": 88
+      },
+      {
+        "name": "PYTHON",
+        "level": 85
+      },
+      {
+        "name": "MONGODB",
+        "level": 72
+      },
+      {
+        "name": "GIT",
+        "level": 80
+      },
+      {
+        "name": "AI/ML",
+        "level": 78
+      },
+      {
+        "name": "HTML/CSS",
+        "level": 82
+      },
+      {
+        "name": "FLASK",
+        "level": 75
+      },
+      {
+        "name": "LANGCHAIN",
+        "level": 70
+      },
+      {
+        "name": "N8N",
+        "level": 68
+      },
+      {
+        "name": "MEDIAPIPE",
+        "level": 50
+      }
+    ],
+    "categories": [
+      {
+        "cat": "FRONTEND",
+        "items": [
+          "React",
+          "JavaScript",
+          "HTML",
+          "CSS"
+        ]
+      },
+      {
+        "cat": "BACKEND",
+        "items": [
+          "Python",
+          "Flask",
+          "Node.js"
+        ]
+      },
+      {
+        "cat": "DATABASE",
+        "items": [
+          "MongoDB"
+        ]
+      }
+    ]
+  },
+  "projects": [
+    {
+      "id": "01",
+      "tag": "FULL STACK",
+      "name": "PPTCon — AI Presentation Generator",
+      "desc": "An AI-powered full stack web app that automatically generates, converts, and enhances PowerPoint presentations. Built with React, Python Flask, MongoDB, Google Gemini API, and Unsplash API. Features include AI slide generation in under 20 seconds, PPT converter with template support, AI chatbot, JWT authentication, and an analytics dashboard.",
+      "techs": [
+        "React",
+        "Python",
+        "Flask",
+        "MongoDB",
+        "Gemini API",
+        "Unsplash API",
+        "JWT",
+        "Tailwind CSS"
+      ],
+      "repoUrl": "#",
+      "liveUrl": "#"
+    },
+    {
+      "id": "02",
+      "tag": "AI SaaS",
+      "name": "ResumeAI — AI Resume Analyzer & HR Dashboard",
+      "desc": "A dual-sided SaaS platform for candidates and HR teams. Candidates get semantic ATS scoring, skill gap analysis, and AI-generated cover letters. HR teams batch-process 20+ resumes with radar charts and automated interview invites via n8n. Built with React, Flask, MongoDB, Gemini 2.5 Flash. Reduced API calls by 90% using Prompt Batching.",
+      "techs": [
+        "React",
+        "Vite",
+        "Python",
+        "Flask",
+        "MongoDB",
+        "Gemini API",
+        "n8n",
+        "JWT",
+        "bcrypt",
+        "PyMuPDF",
+        "Tailwind CSS",
+        "Recharts"
+      ],
+      "repoUrl": "#",
+      "liveUrl": "#"
+    },
+    {
+      "id": "03",
+      "tag": "AI + ML",
+      "name": "SignLang — Real-Time Sign Language Translator",
+      "desc": "A real-time sign language detection system that translates hand gestures to text instantly using webcam. Built with MediaPipe for hand landmark detection, Random Forest classifier for gesture recognition, Python Flask backend, and React frontend. Trained on custom gesture dataset with high accuracy.\n\n",
+      "techs": [
+        "React",
+        "Python",
+        "Flask",
+        "MediaPipe",
+        "Random Forest",
+        "OpenCV",
+        "scikit-learn",
+        "JavaScript"
+      ],
+      "repoUrl": "#",
+      "liveUrl": "#"
+    },
+    {
+      "id": "04",
+      "tag": "AI + ML",
+      "name": "SignLang — Real-Time Sign Language Translator",
+      "desc": "\n\n\nA real-time sign language detection system that translates hand gestures to text instantly using webcam. Built with MediaPipe for hand landmark detection, Random Forest classifier for gesture recognition, Python Flask backend, and React frontend. Trained on custom gesture dataset with high accuracy.",
+      "techs": [
+        "React",
+        "Python",
+        "Flask",
+        "MediaPipe",
+        "Random",
+        "Forest",
+        "OpenCV",
+        "scikit-learn",
+        "JavaScript"
+      ],
+      "repoUrl": "#",
+      "liveUrl": "#"
+    }
+  ],
+  "contact": {
+    "heading": "SEND SIGNAL",
+    "description": "The channel is open. Collaborate, discuss ideas, or just connect — transmit your message and I will respond within one orbital cycle.",
+    "links": [
+      {
+        "type": "aryamaniboriya94@gmail.com",
+        "txt": "aryamaniboriya94@gmail.com",
+        "bin": "01001101"
+      },
+      {
+        "type": "https://github.com/Aryaman-niboriya",
+        "txt": "github.com/aryaman",
+        "bin": "01000111"
+      },
+      {
+        "type": "https://www.linkedin.com/in/aryaman-niboriya-474191360/",
+        "txt": "linkedin.com/in/aryaman",
+        "bin": "01001100"
+      },
+      {
+        "type": "https://x.com/AryamanNib7959",
+        "txt": "@aryaman_dev",
+        "bin": "01010100"
+      }
+    ],
+    "availability": {
+      "freelance": true,
+      "opportunities": true,
+      "responseTime": "<24H",
+      "timezone": "IST UTC+5:30"
+    }
+  },
+  "footer": {
+    "description": "Digital architect building high-performance interfaces and distributed systems at the edge of the void.",
+    "copyright": "© 2026 ARYAMAN NIBORIYA // ALL BITS RESERVED"
+  }
+}
