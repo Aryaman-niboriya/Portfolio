@@ -189,8 +189,8 @@
         "Tailwind CSS",
         "Recharts"
       ],
-      "repoUrl": "#",
-      "liveUrl": "#"
+      "repoUrl": "https://github.com/Aryaman-niboriya/resume-analyzer-builder",
+      "liveUrl": "https://resume-analyzer-builder.vercel.app/"
     },
     {
       "id": "03",
