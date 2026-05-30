@@ -13,6 +13,9 @@ import { BinaryTextCanvas } from "@/components/BinaryTextCanvas";
 import { CyberPlanet } from "@/components/CyberPlanet";
 import { Github, Linkedin, Mail, Twitter, ChevronDown, ExternalLink } from "lucide-react";
 import defaultContent from "@/data/content.json";
+import { sfx } from "@/lib/AudioEngine";
+import { CyberConsole } from "@/components/CyberConsole";
+import { ArcadeOverload } from "@/components/ArcadeOverload";
 
 /* ══════════════════════════════════════
    DESIGN TOKENS
@@ -433,6 +436,32 @@ export default function Home() {
   const [content, setContent] = useState(defaultContent);
   const [formStatus, setFormStatus] = useState<"IDLE" | "SENDING" | "SUCCESS" | "ERROR">("IDLE");
   const [formData, setFormData] = useState({ name: "", email: "", subject: "", message: "" });
+  const [overloaded, setOverloaded] = useState(false);
+  const [preOverload, setPreOverload] = useState(false);
+  const [liveLogs, setLiveLogs] = useState<string[]>([
+    "[SYS] AryamanOS successfully loaded.",
+    "[NET] Port 3000 listening for signals...",
+  ]);
+
+  useEffect(() => {
+    const possibleLogs = [
+      "GIT: Pushed 'Add AI Chatbot' to origin/main",
+      "LINT: ESLint check 100% passed.",
+      "DB: Connected to MongoDB cluster.",
+      "AI: Batch parsing query completed in 1.4s",
+      "SYS: Core temp check optimal: 36.6C",
+      "NET: Signal telemetry ping latency 12ms",
+      "n8n: HR automate email node fired: SUCCESS",
+      "DEPLOY: Production bundle live on Vercel.",
+    ];
+    const interval = setInterval(() => {
+      const randomLog = possibleLogs[Math.floor(Math.random() * possibleLogs.length)];
+      const time = new Date().toLocaleTimeString();
+      setLiveLogs(prev => [...prev.slice(-3), `[${time}] ${randomLog}`]);
+      sfx.playClick();
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
   
   const handleFormChange = (key: string, val: string) => {
     setFormData(prev => ({ ...prev, [key]: val }));
@@ -441,6 +470,7 @@ export default function Home() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormStatus("SENDING");
+    sfx.playTelemetry();
 
     try {
       // Using Web3Forms - Free and Zero-Config for portfolios
@@ -459,14 +489,17 @@ export default function Home() {
       const result = await response.json();
       if (result.success) {
         setFormStatus("SUCCESS");
+        sfx.playBeep();
         setFormData({ name: "", email: "", subject: "", message: "" });
         setTimeout(() => setFormStatus("IDLE"), 4000);
       } else {
         setFormStatus("ERROR");
+        sfx.playGlitch();
         setTimeout(() => setFormStatus("IDLE"), 3000);
       }
     } catch (err) {
       setFormStatus("ERROR");
+      sfx.playGlitch();
       setTimeout(() => setFormStatus("IDLE"), 3000);
     }
   };
@@ -485,8 +518,17 @@ export default function Home() {
     twitter: <Twitter size={14} />,
   };
 
+  const triggerOverloadSequence = () => {
+    setPreOverload(true);
+    sfx.playGlitch();
+    setTimeout(() => {
+      setPreOverload(false);
+      setOverloaded(true);
+    }, 1500);
+  };
+
   return (
-    <main className="relative min-h-screen bg-void-darker overflow-x-hidden">
+    <main className={`relative min-h-screen bg-void-darker overflow-x-hidden ${preOverload ? "screen-shake" : ""}`}>
       <SpaceBackground />
       <Navbar />
 
@@ -566,6 +608,22 @@ export default function Home() {
                 <div className="text-matrix-green/20 mb-1">// CORE STATUS</div>
                 <div>■ AVAILABLE FOR FREELANCE &nbsp;<span className="text-matrix-green">YES</span></div>
                 <div>■ OPEN TO OPPORTUNITIES &nbsp;&nbsp;<span className="text-matrix-green">YES</span></div>
+              </div>
+            </div>
+            
+            {/* Live Compiler Log Widget */}
+            <div className="border border-matrix-green/10 p-5 relative overflow-hidden w-full bg-void-black/40 min-h-[135px]">
+              <BinaryTile />
+              <div className="relative z-10 font-mono text-[9px] text-matrix-green/20 uppercase tracking-widest mb-3 flex justify-between items-center select-none">
+                <span>// LIVE PROCESSOR LOGS</span>
+                <span className="w-1.5 h-1.5 bg-matrix-green rounded-full animate-ping" />
+              </div>
+              <div className="relative z-10 font-mono text-[11px] text-matrix-green/75 space-y-1.5 text-left h-[75px] flex flex-col justify-end overflow-hidden">
+                {liveLogs.map((log, idx) => (
+                  <div key={idx} className="truncate">
+                    <span className="text-matrix-green/30 font-bold">›</span> {log}
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -774,53 +832,71 @@ export default function Home() {
           </div>
 
           {/* RIGHT — form */}
-          <form onSubmit={handleSubmit} className="flex flex-col items-center gap-8 w-full md:pt-2">
-            <Field 
-              name="name" label="NAME" ph="01000001..." 
-              value={formData.name} onChange={(v) => handleFormChange("name", v)} 
-            />
-            <Field 
-              name="email" label="EMAIL" type="email" ph="signal@source.binary" 
-              value={formData.email} onChange={(v) => handleFormChange("email", v)} 
-            />
-            <Field 
-              name="subject" label="SUBJECT" ph="01010011..." 
-              value={formData.subject} onChange={(v) => handleFormChange("subject", v)} 
-            />
-            <Field 
-              name="message" label="MESSAGE" ph="Transmit your signal here..." rows={5} 
-              value={formData.message} onChange={(v) => handleFormChange("message", v)} 
-            />
-            
-            <div className="w-full relative">
-              <motion.button
-                type="submit"
-                disabled={formStatus === "SENDING"}
-                whileHover={{ scale: 1.015 }} whileTap={{ scale: 0.97 }}
-                className={`w-full font-mono font-bold text-xs tracking-[0.3em] py-5 uppercase transition-all duration-300 ${
-                  formStatus === "SUCCESS" ? "bg-green-500 text-white" : 
-                  formStatus === "ERROR" ? "bg-red-500 text-white" : 
-                  "bg-matrix-green text-void-darker hover:bg-matrix-green/80"
-                }`}
-              >
-                {formStatus === "IDLE" && "TRANSMIT SIGNAL →"}
-                {formStatus === "SENDING" && "TRANSMITTING..."}
-                {formStatus === "SUCCESS" && "SIGNAL RECEIVED"}
-                {formStatus === "ERROR" && "UPLINK FAILED"}
-              </motion.button>
+          <div className="relative w-full">
+            <form onSubmit={handleSubmit} className="flex flex-col items-center gap-8 w-full md:pt-2">
+              <Field 
+                name="name" label="NAME" ph="01000001..." 
+                value={formData.name} onChange={(v) => handleFormChange("name", v)} 
+              />
+              <Field 
+                name="email" label="EMAIL" type="email" ph="signal@source.binary" 
+                value={formData.email} onChange={(v) => handleFormChange("email", v)} 
+              />
+              <Field 
+                name="subject" label="SUBJECT" ph="01010011..." 
+                value={formData.subject} onChange={(v) => handleFormChange("subject", v)} 
+              />
+              <Field 
+                name="message" label="MESSAGE" ph="Transmit your signal here..." rows={5} 
+                value={formData.message} onChange={(v) => handleFormChange("message", v)} 
+              />
               
-              {formStatus === "SUCCESS" && (
-                <p className="font-mono text-[10px] text-matrix-green/60 text-center mt-3 animate-pulse">
-                  // message successfully encrypted and transmitted
-                </p>
-              )}
-              {formStatus === "ERROR" && (
-                <p className="font-mono text-[10px] text-red-500/60 text-center mt-3 animate-pulse">
-                  // transmission error. check uplink or access key.
-                </p>
-              )}
-            </div>
-          </form>
+              <div className="w-full relative">
+                <motion.button
+                  type="submit"
+                  disabled={formStatus === "SENDING"}
+                  whileHover={{ scale: 1.015 }} whileTap={{ scale: 0.97 }}
+                  onMouseEnter={() => sfx.playPing()}
+                  className={`w-full font-mono font-bold text-xs tracking-[0.3em] py-5 uppercase transition-all duration-300 ${
+                    formStatus === "SUCCESS" ? "bg-green-500 text-white" : 
+                    formStatus === "ERROR" ? "bg-red-500 text-white" : 
+                    "bg-matrix-green text-void-darker hover:bg-matrix-green/80"
+                  }`}
+                >
+                  {formStatus === "IDLE" && "TRANSMIT SIGNAL →"}
+                  {formStatus === "SENDING" && "TRANSMITTING..."}
+                  {formStatus === "SUCCESS" && "SIGNAL RECEIVED"}
+                  {formStatus === "ERROR" && "UPLINK FAILED"}
+                </motion.button>
+                
+                {formStatus === "SUCCESS" && (
+                  <p className="font-mono text-[10px] text-matrix-green/60 text-center mt-3 animate-pulse">
+                    // message successfully encrypted and transmitted
+                  </p>
+                )}
+                {formStatus === "ERROR" && (
+                  <p className="font-mono text-[10px] text-red-500/60 text-center mt-3 animate-pulse">
+                    // transmission error. check uplink or access key.
+                  </p>
+                )}
+              </div>
+            </form>
+            
+            {/* Telemetry Sending Screen Overlay */}
+            {formStatus === "SENDING" && (
+              <div className="absolute inset-0 bg-void-darker/95 border border-matrix-green/20 flex flex-col justify-center items-center gap-4 text-center z-25 rounded backdrop-blur-sm shadow-[0_0_30px_rgba(0,255,65,0.1)]">
+                <div className="w-14 h-14 border-2 border-matrix-green border-t-transparent rounded-full animate-spin" />
+                <div className="font-mono text-xs text-matrix-green tracking-[0.2em] font-bold animate-pulse">
+                  // ESTABLISHING ENCRYPTED UPLINK...
+                </div>
+                <div className="font-mono text-[9px] text-matrix-green/40 space-y-1.5 mt-2">
+                  <div>TRANSMITTING BINARY DATA STREAM...</div>
+                  <div>UPLINK PORT: SECURE NODE 7G</div>
+                  <div className="text-matrix-green/20">TARGET IP: 127.0.0.1 // DEV_PORTAL</div>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </section>
 
@@ -945,6 +1021,14 @@ export default function Home() {
           </motion.div>
         </motion.div>
       </footer>
+
+      {/* Cyberpunk Console Overlay */}
+      <CyberConsole onTriggerOverload={triggerOverloadSequence} />
+
+      {/* System Overload Minigame Overlay */}
+      {overloaded && (
+        <ArcadeOverload onClose={() => setOverloaded(false)} />
+      )}
     </main>
   );
 }

@@ -4,9 +4,15 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { BinaryTextCanvas } from "./BinaryTextCanvas";
 import { cn } from "@/lib/utils";
+import { sfx } from "@/lib/AudioEngine";
 
 export const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
+
+  useEffect(() => {
+    setIsMuted(sfx.isMuted());
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -72,6 +78,29 @@ export const Navbar = () => {
                 </motion.li>
             ))}
             </ul>
+
+            {/* Sound FX Controller */}
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => {
+                  const target = !isMuted;
+                  setIsMuted(target);
+                  sfx.setMuted(target);
+                  sfx.playPing();
+                }}
+                className="flex items-center gap-2 px-3 py-1.5 border border-matrix-green/20 hover:border-matrix-green/50 bg-matrix-green/5 hover:bg-matrix-green/10 text-matrix-green transition-all rounded cursor-pointer group"
+                title={isMuted ? "Unmute sound effects" : "Mute sound effects"}
+              >
+                <div className="flex items-center gap-0.5 h-3">
+                  <span className={cn("w-[2px] bg-matrix-green rounded-full transition-all duration-200", isMuted ? "h-1" : "h-3 animate-pulse")} />
+                  <span className={cn("w-[2px] bg-matrix-green rounded-full transition-all duration-200 delay-75", isMuted ? "h-1" : "h-2 animate-pulse")} style={{ animationDelay: "0.15s" }} />
+                  <span className={cn("w-[2px] bg-matrix-green rounded-full transition-all duration-200 delay-150", isMuted ? "h-1" : "h-3 animate-pulse")} style={{ animationDelay: "0.3s" }} />
+                </div>
+                <span className="font-mono text-[9px] tracking-widest font-bold text-matrix-green/60 group-hover:text-matrix-green">
+                  SFX: {isMuted ? "MUTED" : "ON"}
+                </span>
+              </button>
+            </div>
 
             {/* Terminal Status Icon */}
             <div className="hidden lg:flex flex-col items-end border-r-2 border-matrix-green/40 pr-4">
