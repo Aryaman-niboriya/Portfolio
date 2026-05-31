@@ -1,29 +1,35 @@
 import { NextResponse } from "next/server";
+import { fetchGitHubContributions } from "@/lib/githubContributions";
 
-// Server-side proxy to avoid CORS and cache the response
-let cache: { data: unknown; ts: number } | null = null;
-const CACHE_TTL = 60 * 60 * 1000; // 1 hour cache
+const CACHE_TTL_MS = 3 * 60 * 1000;
+let cache: { data: Awaited<ReturnType<typeof fetchGitHubContributions>>; ts: number } | null =
+  null;
+
+export const dynamic = "force-dynamic";
 
 export async function GET() {
-  // Return cached data if still fresh
-  if (cache && Date.now() - cache.ts < CACHE_TTL) {
-    return NextResponse.json(cache.data);
-  }
+  const now = Date.now();
+  const useCache = cache && now - cache.ts < CACHE_TTL_MS;
 
   try {
-    const res = await fetch(
-      "https://github-contributions-api.jogruber.de/v4/Aryaman-niboriya",
-      { next: { revalidate: 3600 } }
-    );
-
-    if (!res.ok) {
-      return NextResponse.json({ error: "Failed to fetch" }, { status: 502 });
+    if (!useCache) {
+      cache = { data: await fetchGitHubContributions(), ts: now };
     }
 
-    const data = await res.json();
-    cache = { data, ts: Date.now() };
-    return NextResponse.json(data);
-  } catch {
-    return NextResponse.json({ error: "Network error" }, { status: 500 });
+    return NextResponse.json(cache!.data, {
+      headers: {
+        "Cache-Control": "public, max-age=0, s-maxage=180, stale-while-revalidate=60",
+        "X-Contributions-Cache": useCache ? "hit" : "miss",
+        "X-Contributions-Source": process.env.GITHUB_TOKEN ? "graphql" : "github-html+jogruber",
+      },
+    });
+  } catch (err) {
+    if (cache) {
+      return NextResponse.json(cache.data, {
+        headers: { "X-Contributions-Cache": "stale-error" },
+      });
+    }
+    console.error("[github-contributions]", err);
+    return NextResponse.json({ error: "Failed to fetch contributions" }, { status: 502 });
   }
 }

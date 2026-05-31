@@ -17,6 +17,14 @@ interface ApiData {
 const MONTH_LABELS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const DAY_LABELS = ["", "Mon", "", "Wed", "", "Fri", ""];
 
+/** Local calendar date as YYYY-MM-DD (avoid toISOString UTC shift — breaks India etc.) */
+function formatDateKey(date: Date): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
 // Matrix green themed level colors
 const LEVEL_COLORS: Record<number, string> = {
   0: "#0b120c", // empty cell
@@ -45,7 +53,11 @@ function buildYearGrid(year: number, contributions: Contribution[]) {
   const firstGridDate = new Date(startDate);
   firstGridDate.setDate(startDate.getDate() - startDayOfWeek);
 
-  const endDate = new Date(year, 11, 31);
+  const today = new Date();
+  const isCurrentYear = year === today.getFullYear();
+  const endDate = isCurrentYear
+    ? new Date(today.getFullYear(), today.getMonth(), today.getDate())
+    : new Date(year, 11, 31);
   const endDayOfWeek = endDate.getDay();
   const lastGridDate = new Date(endDate);
   lastGridDate.setDate(endDate.getDate() + (6 - endDayOfWeek));
@@ -55,7 +67,7 @@ function buildYearGrid(year: number, contributions: Contribution[]) {
   const currentDate = new Date(firstGridDate);
 
   while (currentDate <= lastGridDate) {
-    const dateStr = currentDate.toISOString().split("T")[0];
+    const dateStr = formatDateKey(currentDate);
     const existing = contributionMap.get(dateStr);
 
     currentWeek.push({
@@ -230,7 +242,7 @@ export function GithubGrid({ compact, size }: GithubGridProps) {
 
   const fetchData = useCallback(async () => {
     try {
-      const res = await fetch("/api/github-contributions");
+      const res = await fetch("/api/github-contributions", { cache: "no-store" });
       if (!res.ok) throw new Error("bad response");
       const json: ApiData = await res.json();
       setData(json);
