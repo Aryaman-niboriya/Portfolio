@@ -6,9 +6,35 @@
   --singularity-purple: #b44fff;
   --void-black: #020a04;
   --void-darker: #010602;
-  
+  --nav-height: 6.25rem;
+
   --background: var(--void-darker);
   --foreground: var(--matrix-green);
+}
+
+html {
+  scroll-padding-top: calc(var(--nav-height) + 1rem);
+}
+
+/* Clearance for fixed navbar — title must start below ARYAMAN_OS bar */
+#hero {
+  padding-top: calc(var(--nav-height) + 0.75rem) !important;
+}
+
+@media (min-width: 768px) {
+  #hero {
+    padding-top: calc(var(--nav-height) + 1rem) !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  #hero {
+    padding-top: calc(var(--nav-height) + 1.25rem) !important;
+  }
+}
+
+.hero-heading {
+  width: 100%;
 }
 
 @theme inline {

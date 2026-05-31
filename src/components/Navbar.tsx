@@ -30,11 +30,13 @@ export const Navbar = () => {
   return (
     <nav
       className={cn(
-        "fixed top-0 left-0 right-0 z-[1000] px-8 py-4 transition-all duration-500",
-        scrolled ? "bg-black/60 backdrop-blur-xl border-b border-matrix-green/20 py-2 shadow-[0_0_20px_rgba(0,255,65,0.1)]" : "bg-transparent py-6"
+        "fixed top-0 left-0 right-0 z-[1000] w-full px-8 min-h-[var(--nav-height)] flex items-center transition-all duration-500",
+        scrolled
+          ? "bg-black/60 backdrop-blur-xl border-b border-matrix-green/20 py-2 shadow-[0_0_20px_rgba(0,255,65,0.1)]"
+          : "bg-transparent py-4 md:py-5"
       )}
     >
-      <div className="max-w-[1400px] mx-auto flex justify-between items-center">
+      <div className="max-w-[1400px] w-full mx-auto flex justify-between items-center">
         {/* Left Side: System Status / Brand */}
         <motion.div 
             initial={{ opacity: 0, x: -20 }}
@@ -65,6 +67,8 @@ export const Navbar = () => {
                 <a
                     href={link.href}
                     className="flex flex-col items-end transition-all duration-300"
+                    onMouseEnter={() => sfx.playPing()}
+                    onClick={() => sfx.playClick()}
                 >
                     <span className="font-mono text-[8px] text-matrix-green/20 group-hover:text-matrix-green/60 transition-colors uppercase tracking-widest">0{i+1}_NODE</span>
                     <span className="font-mono text-[12px] text-matrix-green/60 group-hover:text-matrix-green group-hover:drop-shadow-[0_0_8px_rgba(0,255,65,0.5)] transition-all uppercase tracking-widest font-bold">
@@ -82,6 +86,7 @@ export const Navbar = () => {
             {/* Sound FX Controller */}
             <div className="flex items-center gap-3">
               <button
+                onMouseEnter={() => sfx.playPing()}
                 onClick={() => {
                   const target = !isMuted;
                   setIsMuted(target);
@@ -113,7 +118,9 @@ export const Navbar = () => {
         <div className="md:hidden">
             <motion.div 
                 whileTap={{ scale: 0.9 }}
-                className="w-10 h-10 border border-matrix-green/30 flex items-center justify-center rounded-sm bg-matrix-green/5"
+                onMouseEnter={() => sfx.playPing()}
+                onClick={() => sfx.playClick()}
+                className="w-10 h-10 border border-matrix-green/30 flex items-center justify-center rounded-sm bg-matrix-green/5 cursor-pointer"
             >
                 <div className="w-5 h-[1px] bg-matrix-green relative before:absolute before:content-[''] before:w-full before:h-full before:bg-matrix-green before:-top-1.5 after:absolute after:content-[''] after:w-full after:h-full after:bg-matrix-green after:top-1.5" />
             </motion.div>

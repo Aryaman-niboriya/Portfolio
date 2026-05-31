@@ -16,6 +16,7 @@ import defaultContent from "@/data/content.json";
 import { sfx } from "@/lib/AudioEngine";
 import { CyberConsole } from "@/components/CyberConsole";
 import { ArcadeOverload } from "@/components/ArcadeOverload";
+import { GithubGrid } from "@/components/GithubGrid";
 
 /* ══════════════════════════════════════
    DESIGN TOKENS
@@ -535,14 +536,18 @@ export default function Home() {
       {/* ═════════════════════════════
           HERO
           ═════════════════════════════ */}
-      <section id="hero" className="relative min-h-screen flex flex-col items-center justify-center pt-[30rem] pb-28 px-6 text-center">
+      <section
+        id="hero"
+        className="relative min-h-screen flex flex-col items-center justify-start pb-28 px-6 text-center pt-[calc(var(--nav-height)+0.75rem)] md:pt-[calc(var(--nav-height)+1rem)] lg:pt-[calc(var(--nav-height)+1.25rem)]"
+      >
 
-        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9 }} className="flex justify-center drop-shadow-[0_0_15px_rgba(0,255,65,0.3)] mt-16">
+        <div className="hero-heading w-full flex flex-col items-center">
+        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9 }} className="flex justify-center drop-shadow-[0_0_15px_rgba(0,255,65,0.3)]">
           <BinaryTextCanvas text={content.hero.firstName} pixelSize={16} letterSpacing={3} color={G} dimColor={DIM} showZeros />
         </motion.div>
 
         {/* spacer between ARYAMAN and NIBORIYA */}
-        <div style={{ height: "60px" }} />
+        <div className="h-8 md:h-12" />
 
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.35 }} className="flex justify-center drop-shadow-[0_0_10px_rgba(0,255,65,0.2)]">
           <BinaryTextCanvas text={content.hero.lastName} pixelSize={9} letterSpacing={2} color={G} dimColor={DIM} showZeros />
@@ -554,12 +559,13 @@ export default function Home() {
           style={{ background: `linear-gradient(90deg, transparent, ${G}55, transparent)` }}
         />
 
-        <div style={{ height: "120px" }} />
+        <div className="h-12 md:h-16" />
 
         {/* ROLE */}
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55 }} className="flex justify-center mb-16">
           <BinaryTextCanvas text={content.hero.role} pixelSize={6} letterSpacing={1} color={G} dimColor={DIM} showZeros />
         </motion.div>
+        </div>
 
         {/* TAGLINE */}
         <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }}
@@ -580,11 +586,14 @@ export default function Home() {
           </a>
         </motion.div>
 
-        {/* PORTRAIT + STATS */}
-        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.0, duration: 0.8 }}
-          className="grid grid-cols-1 md:grid-cols-2 gap-24 w-full max-w-5xl items-center mt-20"
+        {/* PORTRAIT + STATS (GitHub grid below CORE STATUS) */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.0, duration: 0.8 }}
+          className="w-full max-w-5xl mt-12 md:mt-16 grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-start"
         >
-          <div className="flex justify-center">
+          <div className="flex justify-center md:justify-start">
             <div className="relative">
               <img src="/portrait.jpg" alt="Portrait" className="w-full max-w-[240px] rounded-lg shadow-[0_0_60px_rgba(0,255,65,0.15)] object-cover brightness-90 contrast-150 hue-rotate-[5deg] [clip-path:inset(5%_0_0_0)] -mt-2 mix-blend-lighten" />
               <div className="absolute -top-3 -right-3 font-mono text-[9px] text-matrix-green/20 text-right leading-6 animate-pulse">
@@ -592,7 +601,7 @@ export default function Home() {
               </div>
             </div>
           </div>
-          <div className="flex flex-col items-center gap-4">
+          <div className="flex flex-col items-center md:items-stretch gap-4 w-full max-w-md mx-auto md:mx-0 md:max-w-none">
             <div className="grid grid-cols-3 gap-3 w-full">
               {content.hero.stats.map((s) => (
                 <div key={s.label} className="border border-matrix-green/10 p-5 text-center relative overflow-hidden group">
@@ -610,22 +619,14 @@ export default function Home() {
                 <div>■ OPEN TO OPPORTUNITIES &nbsp;&nbsp;<span className="text-matrix-green">YES</span></div>
               </div>
             </div>
-            
-            {/* Live Compiler Log Widget */}
-            <div className="border border-matrix-green/10 p-5 relative overflow-hidden w-full bg-void-black/40 min-h-[135px]">
-              <BinaryTile />
-              <div className="relative z-10 font-mono text-[9px] text-matrix-green/20 uppercase tracking-widest mb-3 flex justify-between items-center select-none">
-                <span>// LIVE PROCESSOR LOGS</span>
-                <span className="w-1.5 h-1.5 bg-matrix-green rounded-full animate-ping" />
-              </div>
-              <div className="relative z-10 font-mono text-[11px] text-matrix-green/75 space-y-1.5 text-left h-[75px] flex flex-col justify-end overflow-hidden">
-                {liveLogs.map((log, idx) => (
-                  <div key={idx} className="truncate">
-                    <span className="text-matrix-green/30 font-bold">›</span> {log}
-                  </div>
-                ))}
-              </div>
-            </div>
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.15, duration: 0.7 }}
+              className="w-full mt-1"
+            >
+              <GithubGrid size="md" />
+            </motion.div>
           </div>
         </motion.div>
 
