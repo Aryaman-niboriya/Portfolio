@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { BinaryTextCanvas } from "./BinaryTextCanvas";
 import { cn } from "@/lib/utils";
 import { sfx } from "@/lib/AudioEngine";
@@ -9,6 +9,7 @@ import { sfx } from "@/lib/AudioEngine";
 export const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
     setIsMuted(sfx.isMuted());
@@ -30,13 +31,13 @@ export const Navbar = () => {
   return (
     <nav
       className={cn(
-        "fixed top-0 left-0 right-0 z-[1000] w-full px-8 min-h-[var(--nav-height)] flex items-center transition-all duration-500",
+        "fixed top-0 left-0 right-0 z-[1000] w-full transition-all duration-500",
         scrolled
-          ? "bg-black/60 backdrop-blur-xl border-b border-matrix-green/20 py-2 shadow-[0_0_20px_rgba(0,255,65,0.1)]"
-          : "bg-transparent py-4 md:py-5"
+          ? "bg-black/60 backdrop-blur-xl border-b border-matrix-green/20 shadow-[0_0_20px_rgba(0,255,65,0.1)]"
+          : "bg-transparent"
       )}
     >
-      <div className="max-w-[1400px] w-full mx-auto flex justify-between items-center">
+      <div className="max-w-[1400px] w-full mx-auto flex justify-between items-center px-4 sm:px-8 min-h-[var(--nav-height)] py-2 md:py-4 lg:py-5">
         {/* Left Side: System Status / Brand */}
         <motion.div 
             initial={{ opacity: 0, x: -20 }}
@@ -114,18 +115,56 @@ export const Navbar = () => {
             </div>
         </div>
 
-        {/* Mobile Menu Icon */}
         <div className="md:hidden">
             <motion.div 
                 whileTap={{ scale: 0.9 }}
                 onMouseEnter={() => sfx.playPing()}
-                onClick={() => sfx.playClick()}
+                onClick={() => { sfx.playClick(); setMobileOpen(o => !o); }}
                 className="w-10 h-10 border border-matrix-green/30 flex items-center justify-center rounded-sm bg-matrix-green/5 cursor-pointer"
             >
-                <div className="w-5 h-[1px] bg-matrix-green relative before:absolute before:content-[''] before:w-full before:h-full before:bg-matrix-green before:-top-1.5 after:absolute after:content-[''] after:w-full after:h-full after:bg-matrix-green after:top-1.5" />
+                <div className="w-5 h-4 flex flex-col justify-between items-center relative">
+                  <span className={cn("w-5 h-[1.5px] bg-matrix-green transition-transform duration-300 origin-left", mobileOpen && "rotate-45 translate-x-[3px] -translate-y-[1px]")} />
+                  <span className={cn("w-5 h-[1.5px] bg-matrix-green transition-opacity duration-300", mobileOpen && "opacity-0")} />
+                  <span className={cn("w-5 h-[1.5px] bg-matrix-green transition-transform duration-300 origin-left", mobileOpen && "-rotate-45 translate-x-[3px] translate-y-[1px]")} />
+                </div>
             </motion.div>
         </div>
       </div>
+
+      {/* Mobile Dropdown Menu */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="md:hidden overflow-hidden border-t border-matrix-green/15 bg-black/80 backdrop-blur-xl"
+          >
+            <ul className="flex flex-col px-6 py-4 gap-1">
+              {navLinks.map((link, i) => (
+                <motion.li
+                  key={link.name}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.07 }}
+                >
+                  <a
+                    href={link.href}
+                    onClick={() => { sfx.playClick(); setMobileOpen(false); }}
+                    className="flex items-center justify-between py-3 border-b border-matrix-green/10 group"
+                  >
+                    <span className="font-mono text-[11px] text-matrix-green/60 group-hover:text-matrix-green transition-colors uppercase tracking-widest font-bold">
+                      {link.name}
+                    </span>
+                    <span className="font-mono text-[8px] text-matrix-green/20 group-hover:text-matrix-green/60 transition-colors">0{i+1}_NODE ›</span>
+                  </a>
+                </motion.li>
+              ))}
+            </ul>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   );
 };

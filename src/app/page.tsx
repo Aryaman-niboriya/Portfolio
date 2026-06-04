@@ -17,6 +17,7 @@ import { sfx } from "@/lib/AudioEngine";
 import { CyberConsole } from "@/components/CyberConsole";
 import { ArcadeOverload } from "@/components/ArcadeOverload";
 import { GithubGrid } from "@/components/GithubGrid";
+import { useWindowWidth, responsivePixelSize } from "@/lib/useWindowWidth";
 
 /* ══════════════════════════════════════
    DESIGN TOKENS
@@ -55,7 +56,8 @@ function BinaryTile() {
    ONLY main section titles use this —
    pixelSize=10 so they tower above everything
    ══════════════════════════════════════ */
-function SectionHeading({ index, title, sub, className = "mb-40" }: { index: string; title: string; sub: string; className?: string }) {
+function SectionHeading({ index, title, sub, className = "mb-16 md:mb-40", winWidth = 1024 }: { index: string; title: string; sub: string; className?: string; winWidth?: number }) {
+  const ps = responsivePixelSize(10, title.length, winWidth, 4);
   return (
     <motion.div
       initial={{ opacity: 0, y: 44 }}
@@ -69,18 +71,18 @@ function SectionHeading({ index, title, sub, className = "mb-40" }: { index: str
         whileInView={{ letterSpacing: "0.4em", opacity: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6, delay: 0.1 }}
-        className="font-mono text-[11px] text-matrix-green/25 mb-6 uppercase tracking-widest"
+        className="font-mono text-[10px] sm:text-[11px] text-matrix-green/25 mb-6 uppercase tracking-widest"
       >
         ── {index} ──
       </motion.p>
-      {/* BIG title — pixelSize 10 */}
+      {/* BIG title — responsive pixelSize */}
       <motion.div
         initial={{ scale: 0.82, opacity: 0 }}
         whileInView={{ scale: 1, opacity: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6, delay: 0.2, ease: "backOut" }}
       >
-        <BinaryTextCanvas text={title} pixelSize={10} letterSpacing={2} color={G} dimColor={DIM} showZeros />
+        <BinaryTextCanvas text={title} pixelSize={ps} letterSpacing={winWidth < 480 ? 1 : 2} color={G} dimColor={DIM} showZeros />
       </motion.div>
       {/* glowing underline */}
       <motion.div
@@ -88,7 +90,7 @@ function SectionHeading({ index, title, sub, className = "mb-40" }: { index: str
         whileInView={{ width: "260px" }}
         viewport={{ once: true }}
         transition={{ duration: 0.9, delay: 0.4 }}
-        className="h-px mt-7"
+        className="h-px mt-5 md:mt-7 max-w-[90vw]"
         style={{ background: `linear-gradient(90deg, transparent, ${G}99, transparent)` }}
       />
       <motion.p
@@ -96,7 +98,7 @@ function SectionHeading({ index, title, sub, className = "mb-40" }: { index: str
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 0.5, delay: 0.55 }}
-        className="mt-5 font-mono text-[10px] text-matrix-green/25 tracking-[0.4em] uppercase"
+        className="mt-4 md:mt-5 font-mono text-[9px] sm:text-[10px] text-matrix-green/25 tracking-[0.3em] sm:tracking-[0.4em] uppercase px-2"
       >
         {sub}
       </motion.p>
@@ -107,19 +109,23 @@ function SectionHeading({ index, title, sub, className = "mb-40" }: { index: str
 /* ══════════════════════════════════════
    COSMIC DIVIDERS
    ══════════════════════════════════════ */
-function DividerBlackHole({ label }: { label: string }) {
+function DividerBlackHole({ label, winWidth = 1024 }: { label: string; winWidth?: number }) {
+  const lPs = winWidth < 640 ? 2 : 4;
+  const lLs = winWidth < 640 ? 0 : 1;
   return (
-    <div className="h-[420px] w-full relative overflow-hidden">
-      <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-void-darker to-transparent z-10 pointer-events-none" />
-      <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-void-darker to-transparent z-10 pointer-events-none" />
+    <div className="h-[220px] sm:h-[300px] md:h-[420px] w-full relative overflow-hidden">
+      <div className="absolute inset-x-0 top-0 h-32 md:h-40 bg-gradient-to-b from-void-darker to-transparent z-10 pointer-events-none" />
+      <div className="absolute inset-x-0 bottom-0 h-32 md:h-40 bg-gradient-to-t from-void-darker to-transparent z-10 pointer-events-none" />
       <div className="w-full h-full">
         <Canvas camera={{ position: [0, 0, 5] }}>
           <BlackHole />
         </Canvas>
       </div>
-      <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none flex-col gap-4">
-        <BinaryTextCanvas text={label} pixelSize={4} letterSpacing={1} color="rgba(0,255,65,0.4)" dimColor="rgba(0,255,65,0.05)" showZeros />
-        <p className="font-mono text-[10px] text-matrix-green/25 tracking-[0.4em] uppercase">// event horizon</p>
+      <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none flex-col gap-2 sm:gap-4 px-4 overflow-hidden">
+        <div className="w-full overflow-hidden flex justify-center">
+          <BinaryTextCanvas text={label} pixelSize={lPs} letterSpacing={lLs} color="rgba(0,255,65,0.4)" dimColor="rgba(0,255,65,0.05)" showZeros />
+        </div>
+        <p className="font-mono text-[8px] sm:text-[10px] text-matrix-green/25 tracking-[0.25em] sm:tracking-[0.4em] uppercase">// event horizon</p>
       </div>
     </div>
   );
@@ -143,17 +149,21 @@ function StarParticles() {
     </Points>
   );
 }
-function DividerStarCluster({ label }: { label: string }) {
+function DividerStarCluster({ label, winWidth = 1024 }: { label: string; winWidth?: number }) {
+  const lPs = winWidth < 640 ? 2 : 4;
+  const lLs = winWidth < 640 ? 0 : 1;
   return (
-    <div className="h-[360px] w-full relative overflow-hidden">
-      <div className="absolute inset-x-0 top-0 h-36 bg-gradient-to-b from-void-darker to-transparent z-10 pointer-events-none" />
-      <div className="absolute inset-x-0 bottom-0 h-36 bg-gradient-to-t from-void-darker to-transparent z-10 pointer-events-none" />
+    <div className="h-[200px] sm:h-[280px] md:h-[360px] w-full relative overflow-hidden">
+      <div className="absolute inset-x-0 top-0 h-28 md:h-36 bg-gradient-to-b from-void-darker to-transparent z-10 pointer-events-none" />
+      <div className="absolute inset-x-0 bottom-0 h-28 md:h-36 bg-gradient-to-t from-void-darker to-transparent z-10 pointer-events-none" />
       <Canvas camera={{ position: [0, 0, 10] }} className="w-full h-full">
         <StarParticles />
       </Canvas>
-      <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none flex-col gap-4">
-        <BinaryTextCanvas text={label} pixelSize={4} letterSpacing={1} color="rgba(0,255,65,0.4)" dimColor="rgba(0,255,65,0.05)" showZeros />
-        <p className="font-mono text-[10px] text-matrix-green/25 tracking-[0.4em] uppercase">// navigation successful</p>
+      <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none flex-col gap-2 sm:gap-4 px-4 overflow-hidden">
+        <div className="w-full overflow-hidden flex justify-center">
+          <BinaryTextCanvas text={label} pixelSize={lPs} letterSpacing={lLs} color="rgba(0,255,65,0.4)" dimColor="rgba(0,255,65,0.05)" showZeros />
+        </div>
+        <p className="font-mono text-[8px] sm:text-[10px] text-matrix-green/25 tracking-[0.25em] sm:tracking-[0.4em] uppercase">// navigation successful</p>
       </div>
     </div>
   );
@@ -185,11 +195,13 @@ function WhiteHoleParticles() {
     </Points>
   );
 }
-function DividerWhiteHole({ label }: { label: string }) {
+function DividerWhiteHole({ label, winWidth = 1024 }: { label: string; winWidth?: number }) {
+  const lPs = winWidth < 640 ? 2 : 4;
+  const lLs = winWidth < 640 ? 0 : 1;
   return (
-    <div className="h-[380px] w-full relative overflow-hidden">
-      <div className="absolute inset-x-0 top-0 h-36 bg-gradient-to-b from-void-darker to-transparent z-10 pointer-events-none" />
-      <div className="absolute inset-x-0 bottom-0 h-36 bg-gradient-to-t from-void-darker to-transparent z-10 pointer-events-none" />
+    <div className="h-[200px] sm:h-[280px] md:h-[380px] w-full relative overflow-hidden">
+      <div className="absolute inset-x-0 top-0 h-28 md:h-36 bg-gradient-to-b from-void-darker to-transparent z-10 pointer-events-none" />
+      <div className="absolute inset-x-0 bottom-0 h-28 md:h-36 bg-gradient-to-t from-void-darker to-transparent z-10 pointer-events-none" />
       <Canvas camera={{ position: [0, 2, 8] }} className="w-full h-full">
         <WhiteHoleParticles />
         <mesh>
@@ -197,9 +209,11 @@ function DividerWhiteHole({ label }: { label: string }) {
           <meshBasicMaterial color={G} transparent opacity={0.9} />
         </mesh>
       </Canvas>
-      <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none flex-col gap-4">
-        <BinaryTextCanvas text={label} pixelSize={4} letterSpacing={1} color="rgba(0,255,65,0.4)" dimColor="rgba(0,255,65,0.05)" showZeros />
-        <p className="font-mono text-[10px] text-matrix-green/25 tracking-[0.4em] uppercase">// white hole · data emission</p>
+      <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none flex-col gap-2 sm:gap-4 px-4 overflow-hidden">
+        <div className="w-full overflow-hidden flex justify-center">
+          <BinaryTextCanvas text={label} pixelSize={lPs} letterSpacing={lLs} color="rgba(0,255,65,0.4)" dimColor="rgba(0,255,65,0.05)" showZeros />
+        </div>
+        <p className="font-mono text-[8px] sm:text-[10px] text-matrix-green/25 tracking-[0.25em] sm:tracking-[0.4em] uppercase">// white hole · data emission</p>
       </div>
     </div>
   );
@@ -228,33 +242,41 @@ function GalaxyParticles() {
     </Points>
   );
 }
-function DividerGalaxy({ label }: { label: string }) {
+function DividerGalaxy({ label, winWidth = 1024 }: { label: string; winWidth?: number }) {
+  const lPs = winWidth < 640 ? 2 : 4;
+  const lLs = winWidth < 640 ? 0 : 1;
   return (
-    <div className="h-[380px] w-full relative overflow-hidden">
-      <div className="absolute inset-x-0 top-0 h-36 bg-gradient-to-b from-void-darker to-transparent z-10 pointer-events-none" />
-      <div className="absolute inset-x-0 bottom-0 h-36 bg-gradient-to-t from-void-darker to-transparent z-10 pointer-events-none" />
+    <div className="h-[200px] sm:h-[280px] md:h-[380px] w-full relative overflow-hidden">
+      <div className="absolute inset-x-0 top-0 h-28 md:h-36 bg-gradient-to-b from-void-darker to-transparent z-10 pointer-events-none" />
+      <div className="absolute inset-x-0 bottom-0 h-28 md:h-36 bg-gradient-to-t from-void-darker to-transparent z-10 pointer-events-none" />
       <Canvas camera={{ position: [0, 6, 0], fov: 60 }} className="w-full h-full">
         <GalaxyParticles />
       </Canvas>
-      <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none flex-col gap-4">
-        <BinaryTextCanvas text={label} pixelSize={4} letterSpacing={1} color="rgba(0,255,65,0.4)" dimColor="rgba(0,255,65,0.05)" showZeros />
-        <p className="font-mono text-[10px] text-matrix-green/25 tracking-[0.4em] uppercase">// milky way · sector 7G</p>
+      <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none flex-col gap-2 sm:gap-4 px-4 overflow-hidden">
+        <div className="w-full overflow-hidden flex justify-center">
+          <BinaryTextCanvas text={label} pixelSize={lPs} letterSpacing={lLs} color="rgba(0,255,65,0.4)" dimColor="rgba(0,255,65,0.05)" showZeros />
+        </div>
+        <p className="font-mono text-[8px] sm:text-[10px] text-matrix-green/25 tracking-[0.25em] sm:tracking-[0.4em] uppercase">// milky way · sector 7G</p>
       </div>
     </div>
   );
 }
 
-function DividerCyberPlanet({ label }: { label: string }) {
+function DividerCyberPlanet({ label, winWidth = 1024 }: { label: string; winWidth?: number }) {
+  const lPs = winWidth < 640 ? 2 : 4;
+  const lLs = winWidth < 640 ? 0 : 1;
   return (
-    <div className="h-[400px] w-full relative overflow-hidden">
-      <div className="absolute inset-x-0 top-0 h-36 bg-gradient-to-b from-void-darker to-transparent z-10 pointer-events-none" />
-      <div className="absolute inset-x-0 bottom-0 h-36 bg-gradient-to-t from-void-darker to-transparent z-10 pointer-events-none" />
+    <div className="h-[220px] sm:h-[300px] md:h-[400px] w-full relative overflow-hidden">
+      <div className="absolute inset-x-0 top-0 h-28 md:h-36 bg-gradient-to-b from-void-darker to-transparent z-10 pointer-events-none" />
+      <div className="absolute inset-x-0 bottom-0 h-28 md:h-36 bg-gradient-to-t from-void-darker to-transparent z-10 pointer-events-none" />
       <Canvas camera={{ position: [0, 1.5, 6] }} className="w-full h-full">
         <CyberPlanet />
       </Canvas>
-      <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none flex-col gap-4">
-        <BinaryTextCanvas text={label} pixelSize={4} letterSpacing={1} color="rgba(0,255,65,0.4)" dimColor="rgba(0,255,65,0.05)" showZeros />
-        <p className="font-mono text-[10px] text-matrix-green/25 tracking-[0.4em] uppercase">// orbital mainframe</p>
+      <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none flex-col gap-2 sm:gap-4 px-4 overflow-hidden">
+        <div className="w-full overflow-hidden flex justify-center">
+          <BinaryTextCanvas text={label} pixelSize={lPs} letterSpacing={lLs} color="rgba(0,255,65,0.4)" dimColor="rgba(0,255,65,0.05)" showZeros />
+        </div>
+        <p className="font-mono text-[8px] sm:text-[10px] text-matrix-green/25 tracking-[0.25em] sm:tracking-[0.4em] uppercase">// orbital mainframe</p>
       </div>
     </div>
   );
@@ -265,17 +287,21 @@ function DividerCyberPlanet({ label }: { label: string }) {
    Sub-heading (skill name): pixelSize 4
    ══════════════════════════════════════ */
 function SkillCard({ name, level }: { name: string; level: number }) {
+  const w = useWindowWidth();
+  const ps = responsivePixelSize(4, name.length, w, 2);
   const blocks = Array.from({ length: 14 }, (_, i) => i < Math.round((level / 100) * 14) ? "1" : "0").join(" ");
   return (
     <motion.div
       whileHover={{ y: -5, borderColor: G + "55" }}
-      className="border border-matrix-green/10 bg-void-black/20 p-6 relative overflow-hidden text-center"
+      className="border border-matrix-green/10 bg-void-black/20 p-3 sm:p-5 relative overflow-hidden text-center"
     >
       <BinaryTile />
-      <div className="relative z-10 flex flex-col items-center gap-4">
-        {/* skill name: pixelSize 4 (label size) */}
-        <BinaryTextCanvas text={name} pixelSize={4} letterSpacing={1} color={G} dimColor={DIM} showZeros />
-        <div className="font-mono text-[9px] text-matrix-green/20 leading-5 tracking-widest">{blocks}</div>
+      <div className="relative z-10 flex flex-col items-center gap-3">
+        {/* skill name: responsive pixelSize */}
+        <div className="w-full overflow-hidden flex justify-center">
+          <BinaryTextCanvas text={name} pixelSize={ps} letterSpacing={w < 480 ? 0 : 1} color={G} dimColor={DIM} showZeros />
+        </div>
+        <div className="font-mono text-[7px] sm:text-[9px] text-matrix-green/20 leading-5 tracking-widest hidden sm:block">{blocks}</div>
         <div className="w-full h-[3px] bg-matrix-green/8 rounded-full overflow-hidden">
           <motion.div
             initial={{ width: 0 }} whileInView={{ width: `${level}%` }} viewport={{ once: true }}
@@ -283,7 +309,7 @@ function SkillCard({ name, level }: { name: string; level: number }) {
             className="h-full rounded-full bg-matrix-green"
           />
         </div>
-        <span className="font-mono text-[10px] text-matrix-green/40">{level}%</span>
+        <span className="font-mono text-[9px] sm:text-[10px] text-matrix-green/40">{level}%</span>
       </div>
     </motion.div>
   );
@@ -303,24 +329,24 @@ function ProjectCard({ p }: { p: ProjectType }) {
     <motion.div
       initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.6 }} whileHover={{ y: -6 }}
-      className="border border-matrix-green/10 p-10 relative overflow-hidden group bg-void-black/15"
+      className="border border-matrix-green/10 p-5 sm:p-8 md:p-10 relative overflow-hidden group bg-void-black/15"
     >
       <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
         style={{ background: `radial-gradient(ellipse at top left, ${G}08 0%, transparent 70%)` }} />
       <BinaryTile />
-      <div className="relative z-10 flex flex-col items-center gap-6 text-center">
+      <div className="relative z-10 flex flex-col items-center gap-4 sm:gap-6 text-center">
         {/* tag + id */}
         <div className="flex items-center justify-between w-full">
-          <span className="font-mono text-[10px] tracking-[0.25em] uppercase text-matrix-green/35">{p.tag}</span>
-          <span className="font-mono text-[9px] text-matrix-green/15 tracking-widest">MODULE {p.id}</span>
+          <span className="font-mono text-[9px] sm:text-[10px] tracking-[0.2em] sm:tracking-[0.25em] uppercase text-matrix-green/35">{p.tag}</span>
+          <span className="font-mono text-[8px] sm:text-[9px] text-matrix-green/15 tracking-widest">MODULE {p.id}</span>
         </div>
         {/* project name: Multi-word wrap support */}
-        <div className="flex flex-wrap justify-center gap-x-4 gap-y-3 px-2">
+        <div className="flex flex-wrap justify-center gap-x-3 sm:gap-x-4 gap-y-2 sm:gap-y-3 px-1 sm:px-2 w-full overflow-hidden">
           {p.name.split(" ").map((word, idx) => (
             <BinaryTextCanvas 
               key={idx} 
               text={word} 
-              pixelSize={p.name.length > 20 ? 4 : 5} 
+              pixelSize={p.name.length > 20 ? 3 : 4} 
               letterSpacing={1} 
               color={G} 
               dimColor={DIM} 
@@ -329,9 +355,9 @@ function ProjectCard({ p }: { p: ProjectType }) {
           ))}
         </div>
         {/* separator */}
-        <div className="w-24 h-px" style={{ background: `linear-gradient(90deg, transparent, ${G}40, transparent)` }} />
+        <div className="w-16 sm:w-24 h-px" style={{ background: `linear-gradient(90deg, transparent, ${G}40, transparent)` }} />
         {/* description */}
-        <p className="font-mono text-sm text-matrix-green/55 leading-loose max-w-sm">{p.desc}</p>
+        <p className="font-mono text-xs sm:text-sm text-matrix-green/55 leading-loose w-full max-w-xs sm:max-w-sm">{p.desc}</p>
         {/* techs */}
         <div className="flex flex-wrap gap-2 justify-center">
           {p.techs.map((t) => (
@@ -387,12 +413,14 @@ function FooterColumn({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.6 }}
-      className={`flex flex-col gap-10 ${alignCls}`}
+      className={`flex flex-col gap-6 sm:gap-10 ${alignCls}`}
     >
-      <motion.div className={`flex flex-col gap-5 w-full ${alignCls}`}>
-        <BinaryTextCanvas text={title} pixelSize={5} letterSpacing={1} color={G} dimColor={DIM} showZeros />
+      <motion.div className={`flex flex-col gap-4 sm:gap-5 w-full overflow-hidden ${alignCls}`}>
+        <div className="overflow-hidden max-w-full">
+          <BinaryTextCanvas text={title} pixelSize={4} letterSpacing={1} color={G} dimColor={DIM} showZeros />
+        </div>
         <div
-          className={`h-px w-full max-w-[140px] ${lineCls}`}
+          className={`h-px w-full max-w-[120px] sm:max-w-[140px] ${lineCls}`}
           style={{ background: `linear-gradient(90deg, transparent, ${G}55, transparent)` }}
         />
       </motion.div>
@@ -434,6 +462,7 @@ function Field({ label, type = "text", ph, rows, value, onChange, name, required
    PAGE
    ══════════════════════════════════════ */
 export default function Home() {
+  const winWidth = useWindowWidth();
   const [content, setContent] = useState(defaultContent);
   const [formStatus, setFormStatus] = useState<"IDLE" | "SENDING" | "SUCCESS" | "ERROR">("IDLE");
   const [formData, setFormData] = useState({ name: "", email: "", subject: "", message: "" });
@@ -538,19 +567,19 @@ export default function Home() {
           ═════════════════════════════ */}
       <section
         id="hero"
-        className="relative min-h-screen flex flex-col items-center justify-start pb-28 px-6 text-center pt-[calc(var(--nav-height)+0.75rem)] md:pt-[calc(var(--nav-height)+1rem)] lg:pt-[calc(var(--nav-height)+1.25rem)]"
+        className="relative min-h-screen flex flex-col items-center justify-start pb-20 px-4 sm:px-6 text-center pt-[calc(var(--nav-height)+0.75rem)] md:pt-[calc(var(--nav-height)+1rem)] lg:pt-[calc(var(--nav-height)+1.25rem)]"
       >
 
         <div className="hero-heading w-full flex flex-col items-center">
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9 }} className="flex justify-center drop-shadow-[0_0_15px_rgba(0,255,65,0.3)]">
-          <BinaryTextCanvas text={content.hero.firstName} pixelSize={16} letterSpacing={3} color={G} dimColor={DIM} showZeros />
+          <BinaryTextCanvas text={content.hero.firstName} pixelSize={responsivePixelSize(16, content.hero.firstName.length, winWidth, 4)} letterSpacing={winWidth < 480 ? 1 : 3} color={G} dimColor={DIM} showZeros />
         </motion.div>
 
         {/* spacer between ARYAMAN and NIBORIYA */}
-        <div className="h-8 md:h-12" />
+        <div className="h-4 md:h-10" />
 
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.35 }} className="flex justify-center drop-shadow-[0_0_10px_rgba(0,255,65,0.2)]">
-          <BinaryTextCanvas text={content.hero.lastName} pixelSize={9} letterSpacing={2} color={G} dimColor={DIM} showZeros />
+          <BinaryTextCanvas text={content.hero.lastName} pixelSize={responsivePixelSize(9, content.hero.lastName.length, winWidth, 3)} letterSpacing={winWidth < 480 ? 1 : 2} color={G} dimColor={DIM} showZeros />
         </motion.div>
 
         {/* thin green line separator between name and role */}
@@ -559,29 +588,29 @@ export default function Home() {
           style={{ background: `linear-gradient(90deg, transparent, ${G}55, transparent)` }}
         />
 
-        <div className="h-12 md:h-16" />
+        <div className="h-6 md:h-12" />
 
         {/* ROLE */}
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55 }} className="flex justify-center mb-16">
-          <BinaryTextCanvas text={content.hero.role} pixelSize={6} letterSpacing={1} color={G} dimColor={DIM} showZeros />
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55 }} className="flex justify-center mb-8 md:mb-14">
+          <BinaryTextCanvas text={content.hero.role} pixelSize={responsivePixelSize(6, content.hero.role.length, winWidth, 3)} letterSpacing={1} color={G} dimColor={DIM} showZeros />
         </motion.div>
         </div>
 
         {/* TAGLINE */}
         <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }}
-          className="font-mono text-sm text-matrix-green/50 max-w-lg leading-loose mt-12 mb-0"
+          className="font-mono text-xs sm:text-sm text-matrix-green/50 max-w-sm sm:max-w-lg leading-loose mt-6 mb-0 px-2"
         >
           {content.hero.tagline}
         </motion.p>
 
         {/* CTAs */}
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.85 }}
-          className="flex flex-wrap justify-center gap-5 mt-10 mb-16"
+          className="flex flex-wrap justify-center gap-3 sm:gap-5 mt-6 mb-8 md:mb-14"
         >
-          <a href="#projects" className="px-10 py-4 bg-matrix-green text-void-darker font-mono text-xs font-bold tracking-[0.25em] uppercase hover:bg-matrix-green/80 transition-colors">
+          <a href="#projects" className="px-6 sm:px-10 py-3 sm:py-4 bg-matrix-green text-void-darker font-mono text-xs font-bold tracking-[0.25em] uppercase hover:bg-matrix-green/80 transition-colors">
             VIEW WORK
           </a>
-          <a href="#contact" className="px-10 py-4 border border-matrix-green/35 text-matrix-green font-mono text-xs tracking-[0.25em] uppercase hover:bg-matrix-green/8 transition-colors">
+          <a href="#contact" className="px-6 sm:px-10 py-3 sm:py-4 border border-matrix-green/35 text-matrix-green font-mono text-xs tracking-[0.25em] uppercase hover:bg-matrix-green/8 transition-colors">
             CONTACT
           </a>
         </motion.div>
@@ -591,29 +620,29 @@ export default function Home() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.0, duration: 0.8 }}
-          className="w-full max-w-5xl mt-12 md:mt-16 grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-start"
+          className="w-full max-w-5xl mt-6 md:mt-12 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 items-start"
         >
           <div className="flex justify-center md:justify-start">
             <div className="relative">
-              <img src="/portrait.jpg" alt="Portrait" className="w-full max-w-[240px] rounded-lg shadow-[0_0_60px_rgba(0,255,65,0.15)] object-cover brightness-90 contrast-150 hue-rotate-[5deg] [clip-path:inset(5%_0_0_0)] -mt-2 mix-blend-lighten" />
-              <div className="absolute -top-3 -right-3 font-mono text-[9px] text-matrix-green/20 text-right leading-6 animate-pulse">
+              <img src="/portrait.jpg" alt="Portrait" className="w-[180px] sm:w-full sm:max-w-[240px] rounded-lg shadow-[0_0_60px_rgba(0,255,65,0.15)] object-cover brightness-90 contrast-150 hue-rotate-[5deg] [clip-path:inset(5%_0_0_0)] -mt-2 mix-blend-lighten" />
+              <div className="hidden sm:block absolute -top-3 -right-3 font-mono text-[9px] text-matrix-green/20 text-right leading-6 animate-pulse">
                 CORE_TEMP: 36.6°<br />SIGNAL: LOCKED<br />ENCRYPTION: ON
               </div>
             </div>
           </div>
-          <div className="flex flex-col items-center md:items-stretch gap-4 w-full max-w-md mx-auto md:mx-0 md:max-w-none">
-            <div className="grid grid-cols-3 gap-3 w-full">
+          <div className="flex flex-col items-center md:items-stretch gap-3 w-full max-w-sm sm:max-w-md mx-auto md:mx-0 md:max-w-none">
+            <div className="grid grid-cols-3 gap-2 sm:gap-3 w-full">
               {content.hero.stats.map((s) => (
-                <div key={s.label} className="border border-matrix-green/10 p-5 text-center relative overflow-hidden group">
+                <div key={s.label} className="border border-matrix-green/10 p-3 sm:p-5 text-center relative overflow-hidden group">
                   <BinaryTile />
-                  <div className="font-orbitron text-2xl font-black text-matrix-green relative z-10 group-hover:text-matrix-green/70 transition-colors">{s.value}</div>
-                  <div className="font-mono text-[9px] text-matrix-green/35 tracking-widest relative z-10 mt-2">{s.label}</div>
+                  <div className="font-orbitron text-lg sm:text-2xl font-black text-matrix-green relative z-10 group-hover:text-matrix-green/70 transition-colors">{s.value}</div>
+                  <div className="font-mono text-[8px] sm:text-[9px] text-matrix-green/35 tracking-widest relative z-10 mt-1 sm:mt-2 leading-tight">{s.label}</div>
                 </div>
               ))}
             </div>
-            <div className="border border-matrix-green/10 p-5 relative overflow-hidden w-full">
+            <div className="border border-matrix-green/10 p-4 sm:p-5 relative overflow-hidden w-full">
               <BinaryTile />
-              <div className="relative z-10 font-mono text-[10px] text-matrix-green/40 leading-8 text-center">
+              <div className="relative z-10 font-mono text-[9px] sm:text-[10px] text-matrix-green/40 leading-7 sm:leading-8 text-center">
                 <div className="text-matrix-green/20 mb-1">// CORE STATUS</div>
                 <div>■ AVAILABLE FOR FREELANCE &nbsp;<span className="text-matrix-green">YES</span></div>
                 <div>■ OPEN TO OPPORTUNITIES &nbsp;&nbsp;<span className="text-matrix-green">YES</span></div>
@@ -623,7 +652,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 1.15, duration: 0.7 }}
-              className="w-full mt-1"
+              className="w-full mt-1 overflow-x-auto"
             >
               <GithubGrid size="md" />
             </motion.div>
@@ -643,10 +672,10 @@ export default function Home() {
       {/* ═════════════════════════════
           ABOUT
           ═════════════════════════════ */}
-      <section id="about" className="relative py-36 px-6 md:px-20 flex flex-col items-center">
-        <SectionHeading index="SECTION 01" title="WHO AM I" sub="// initializing entity data..." />
+      <section id="about" className="relative py-20 md:py-36 px-4 sm:px-6 md:px-20 flex flex-col items-center">
+        <SectionHeading index="SECTION 01" title="WHO AM I" sub="// initializing entity data..." winWidth={winWidth} />
 
-        <div className="max-w-4xl w-full mx-auto flex flex-col items-center gap-40">
+        <div className="max-w-4xl w-full mx-auto flex flex-col items-center gap-20 md:gap-40">
 
           {/* BIO */}
           <motion.div
@@ -704,13 +733,13 @@ export default function Home() {
       {/* ═════════════════════════════
           SKILLS
           ═════════════════════════════ */}
-      <section id="skills" className="relative py-36 px-6 md:px-20 flex flex-col items-center gap-24">
-        <SectionHeading index="SECTION 02" title="SKILLS" sub="// scanning capability matrix..." className="mb-0" />
+      <section id="skills" className="relative py-20 md:py-36 px-4 sm:px-6 md:px-20 flex flex-col items-center gap-16 md:gap-24">
+        <SectionHeading index="SECTION 02" title="SKILLS" sub="// scanning capability matrix..." className="mb-0" winWidth={winWidth} />
 
-        <div className="max-w-6xl w-full mx-auto flex flex-col items-center gap-40 w-full">
+        <div className="max-w-6xl w-full mx-auto flex flex-col items-center gap-20 md:gap-40 w-full">
 
           {/* SKILL CARDS GRID */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5 w-full">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5 w-full">
             {content.skills.cards.map((s, i) => (
               <motion.div key={s.name} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }} transition={{ delay: i * 0.05 }}
@@ -722,7 +751,7 @@ export default function Home() {
 
           {/* STACK CATEGORIES */}
           {/* Category titles: pixelSize 6 = sub-heading */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 w-full">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 w-full">
             {content.skills.categories.map(({ cat, items }) => (
               <div key={cat} className="border border-matrix-green/10 px-8 py-10 relative overflow-hidden flex flex-col items-center gap-6">
                 <BinaryTile />
@@ -750,9 +779,9 @@ export default function Home() {
       {/* ═════════════════════════════
           PROJECTS
           ═════════════════════════════ */}
-      <section id="projects" className="relative py-36 px-6 md:px-20 flex flex-col items-center gap-24">
-        <SectionHeading index="SECTION 03" title="PROJECTS" sub="// loading repository data..." className="mb-0" />
-        <div className="max-w-6xl w-full mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 w-full">
+      <section id="projects" className="relative py-20 md:py-36 px-4 sm:px-6 md:px-20 flex flex-col items-center gap-16 md:gap-24">
+        <SectionHeading index="SECTION 03" title="PROJECTS" sub="// loading repository data..." className="mb-0" winWidth={winWidth} />
+        <div className="max-w-6xl w-full mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 w-full">
           {content.projects.map((p) => <ProjectCard key={p.id} p={p} />)}
         </div>
       </section>
@@ -763,10 +792,10 @@ export default function Home() {
       {/* ═════════════════════════════
           CONTACT
           ═════════════════════════════ */}
-      <section id="contact" className="relative pt-36 pb-8 px-6 md:px-20 flex flex-col items-center gap-24">
-        <SectionHeading index="SECTION 04" title="CONTACT" sub="// establishing uplink..." className="mb-0" />
+      <section id="contact" className="relative pt-20 md:pt-36 pb-8 px-4 sm:px-6 md:px-20 flex flex-col items-center gap-16 md:gap-24">
+        <SectionHeading index="SECTION 04" title="CONTACT" sub="// establishing uplink..." className="mb-0" winWidth={winWidth} />
 
-        <div className="max-w-6xl w-full mx-auto grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-14 w-full items-start">
+        <div className="max-w-6xl w-full mx-auto grid grid-cols-1 md:grid-cols-2 gap-x-12 lg:gap-x-16 gap-y-10 md:gap-y-14 w-full items-start">
 
           {/* LEFT — info */}
           <div className="flex flex-col items-center md:items-start gap-10 w-full">
@@ -907,7 +936,7 @@ export default function Home() {
       {/* ═════════════════════════════
           FOOTER
           ═════════════════════════════ */}
-      <footer className="relative pt-28 pb-16 px-6 md:px-12 lg:px-24 overflow-hidden border-t border-matrix-green/15">
+      <footer className="relative pt-16 md:pt-28 pb-12 md:pb-16 px-4 sm:px-6 md:px-12 lg:px-24 overflow-hidden border-t border-matrix-green/15">
         <motion.div className="absolute inset-0 z-0 pointer-events-none opacity-25">
           <Canvas camera={{ position: [0, 0, 8] }}>
             <BlackHole />
@@ -924,7 +953,7 @@ export default function Home() {
             ── FOOTER NODE // END TRANSMISSION ──
           </motion.p>
 
-          <motion.div className="flex flex-col md:flex-row justify-between items-start gap-16 lg:gap-8 mb-20 w-full">
+          <motion.div className="flex flex-col md:flex-row justify-between items-start gap-10 md:gap-16 lg:gap-8 mb-12 md:mb-20 w-full">
             {/* LEFT COLUMN */}
             <div className="flex-1 flex justify-start">
               <FooterColumn title="ARYAMAN" align="start">
@@ -1011,7 +1040,7 @@ export default function Home() {
             </div>
           </motion.div>
 
-          <motion.div className="pt-10 border-t border-matrix-green/8 flex flex-col md:flex-row items-center justify-between gap-8 w-full">
+          <motion.div className="pt-10 border-t border-matrix-green/8 flex flex-col md:flex-row items-center justify-between gap-4 md:gap-8 w-full">
             <p className="font-mono text-[10px] text-matrix-green/25 tracking-[0.35em] order-2 md:order-1">
               {content.footer.copyright}
             </p>

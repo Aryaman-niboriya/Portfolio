@@ -6,10 +6,16 @@
   --singularity-purple: #b44fff;
   --void-black: #020a04;
   --void-darker: #010602;
-  --nav-height: 6.25rem;
+  --nav-height: 5rem;
 
   --background: var(--void-darker);
   --foreground: var(--matrix-green);
+}
+
+@media (min-width: 768px) {
+  :root {
+    --nav-height: 6.25rem;
+  }
 }
 
 html {
